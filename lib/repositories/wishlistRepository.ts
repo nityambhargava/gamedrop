@@ -64,4 +64,39 @@ export class WishlistRepository {
 
     return data
   }
+
+    async updateCustomTargetPrice(
+    id: string,
+    userId: string,
+    customTargetPrice: number | null
+  ): Promise<WishlistRow | null> {
+    const { data, error } = await this.supabase
+      .from('user_wishlist')
+      .update({ custom_target_price: customTargetPrice })
+      .eq('id', id)
+      .eq('user_id', userId)
+      .select('*')
+      .maybeSingle()
+
+    if (error) {
+      throw new Error(`Failed to update wishlist entry: ${error.message}`)
+    }
+
+    return data
+  }
+
+  async delete(id: string, userId: string): Promise<boolean> {
+    const { data, error } = await this.supabase
+      .from('user_wishlist')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId)
+      .select('id')
+
+    if (error) {
+      throw new Error(`Failed to delete wishlist entry: ${error.message}`)
+    }
+
+    return (data?.length ?? 0) > 0
+  }
 }
