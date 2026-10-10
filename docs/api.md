@@ -82,8 +82,30 @@ Auth: required
 ```
 `401`: `{ "error": "Unauthorized" }`
 
-## PATCH /api/settings  — COMING IN STEP 10 (not built yet)
-Will update the global default target price (and email notification toggle).
+## PATCH /api/settings
+Auth: required. Partial update: send only what you want to change. At least one field is required.
+`currency` and `region` cannot be changed yet; sending them has no effect.
+
+Request (any combination):
+```json
+{ "defaultTargetPrice": 1800, "emailNotificationsEnabled": false }
+```
+`defaultTargetPrice`: a finite number, 0 to 500000, at most 2 decimal places. Cannot be `null`.
+`emailNotificationsEnabled`: boolean.
+
+Changing the default also changes `targetPrice` on every wishlist item that has no custom target.
+
+`200` (full updated settings, same shape as GET):
+```json
+{
+  "defaultTargetPrice": 1800,
+  "currency": "INR",
+  "region": "IN",
+  "emailNotificationsEnabled": false
+}
+```
+`400`: `{ "error": "defaultTargetPrice must not be negative" }`, `{ "error": "emailNotificationsEnabled must be a boolean" }`, or `{ "error": "Provide at least one of: defaultTargetPrice, emailNotificationsEnabled" }`
+`401`: `{ "error": "Unauthorized" }`
 
 ## GET /api/games/search?q=<query>
 Auth: required. `q` is required, max 100 characters.
