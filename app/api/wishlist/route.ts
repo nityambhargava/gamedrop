@@ -46,6 +46,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: priceValidation.error }, { status: 400 })
   }
 
+  // The browser only tells us WHICH product it wants. Title, platform,
+  // edition and region are re-resolved server-side via the provider.
   const provider = getPriceProvider()
   let resolvedPrice
   try {
@@ -73,6 +75,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         id: entry.id,
+        storeProductId: mappingId,
         providerProductId: resolvedPrice.providerProductId,
         title: resolvedPrice.title,
         platform: resolvedPrice.platform,
@@ -126,10 +129,11 @@ export async function GET() {
       custom_target_price,
       added_at,
       game_provider_mapping (
+        id,
         provider_product_id,
         platform,
         edition,
-        games ( title )
+        games ( title, artwork_url )
       )
     `
     )
@@ -158,8 +162,10 @@ export async function GET() {
 
         return {
           id: row.id,
+          storeProductId: mapping.id,
           providerProductId: mapping.provider_product_id,
           title: mapping.games.title,
+          artworkUrl: mapping.games.artwork_url,
           platform: mapping.platform,
           edition: mapping.edition,
           currentPrice: currentPrice.effectivePrice,
@@ -172,8 +178,10 @@ export async function GET() {
         if (err instanceof GameNotFoundError) {
           return {
             id: row.id,
+            storeProductId: mapping.id,
             providerProductId: mapping.provider_product_id,
             title: mapping.games.title,
+            artworkUrl: mapping.games.artwork_url,
             platform: mapping.platform,
             edition: mapping.edition,
             currentPrice: null,
