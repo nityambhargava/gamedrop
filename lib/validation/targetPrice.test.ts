@@ -11,6 +11,15 @@ describe('validateCustomTargetPrice', () => {
     expect(validateCustomTargetPrice(null)).toEqual({ valid: true, value: null })
   })
 
+  it('accepts values that floating-point math makes look inexact', () => {
+    expect(validateCustomTargetPrice(4.35)).toEqual({ valid: true, value: 4.35 })
+    expect(validateCustomTargetPrice(1.15)).toEqual({ valid: true, value: 1.15 })
+  })
+
+  it('rejects tiny values that print in exponent notation', () => {
+    expect(validateCustomTargetPrice(1e-7).valid).toBe(false)
+  })
+
   it('accepts a valid non-negative number with up to 2 decimal places', () => {
     expect(validateCustomTargetPrice(1500)).toEqual({ valid: true, value: 1500 })
     expect(validateCustomTargetPrice(1499.99)).toEqual({ valid: true, value: 1499.99 })

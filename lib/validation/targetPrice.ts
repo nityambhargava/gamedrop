@@ -9,9 +9,10 @@ type AmountValidationResult =
   | { valid: false; error: string }
 
 function hasAtMostTwoDecimalPlaces(value: number): boolean {
-  if (Number.isInteger(value)) return true
-  const [, decimals] = value.toString().split('.')
-  return decimals === undefined || decimals.length <= 2
+  // toFixed(2) rounds to 2 places; if that changes the value, it had more.
+  // (Splitting toString() on '.' breaks for tiny values like 1e-7, which
+  // print in exponent notation.)
+  return Number(value.toFixed(2)) === value
 }
 
 function validatePriceAmount(input: unknown, field: string): AmountValidationResult {
