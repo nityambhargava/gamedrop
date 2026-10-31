@@ -47,11 +47,16 @@ export class GameCatalogRepository {
   }
 
   async findGameByTitle(title: string): Promise<GameRow | null> {
-    // ilike with no wildcards = exact match, case-insensitive
+    // Exact match, NOT a pattern match: .ilike() treats % and _ (and * via
+    // PostgREST) inside the title as wildcards. Titles come from the provider's
+    // canonical data, so casing is consistent. Oldest row first, so a duplicate
+    // created by a past race can't make this lookup throw.
     const { data, error } = await this.admin
       .from('games')
       .select('*')
-      .ilike('title', title)
+      .eq('title', title)
+      .order('created_at', { ascending: true })
+      .limit(1)
       .maybeSingle()
 
     if (error) {
