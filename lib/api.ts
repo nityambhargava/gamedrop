@@ -1,6 +1,6 @@
 import type { AddedWishlistItem, SearchResult, Settings, StoreProduct, WishlistItem } from "@/types/api";
 
-export const USE_MOCK = true;
+export const USE_MOCK = false;
 export const SHOW_DEMO_BADGE = true;
 
 export class ApiError extends Error {

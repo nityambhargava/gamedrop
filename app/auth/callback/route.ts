@@ -5,10 +5,9 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
 
-  // Don't trust request.url's origin behind a reverse proxy (Codespaces'
-  // port forwarding, or production load balancers) — it can reflect an
-  // internal hostname instead of the public one. Fall back to it only
-  // if NEXT_PUBLIC_SITE_URL isn't set.
+  // Behind a reverse proxy (Codespaces port forwarding, production load
+  // balancers) request.url's origin can be an internal hostname, so prefer the
+  // configured public URL.
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? origin
 
   if (code) {
@@ -16,7 +15,7 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      return NextResponse.redirect(`${siteUrl}/dashboard`)
+      return NextResponse.redirect(`${siteUrl}/`)
     }
   }
 

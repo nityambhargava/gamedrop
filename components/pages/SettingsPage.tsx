@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { SignOutButton } from "@/components/SignOutButton";
 import { AppFrame, LoadError, LoadingRows, Spinner, formatMoney } from "@/components/pages/shared";
 
 export function SettingsPage() {
@@ -98,6 +99,14 @@ export function SettingsPage() {
             <Button size="sm" disabled={mutation.isPending} onClick={saveTarget}>
               {mutation.isPending ? <Spinner /> : null} Save
             </Button>
+          </div>
+        </section>
+
+        <section className="rounded-md border border-border/70 bg-card/60 p-5">
+          <h2 className="text-sm font-semibold">Account</h2>
+          <p className="mt-1 text-xs text-muted-foreground">Sign out of GameDrop on this device.</p>
+          <div className="mt-4">
+            <SignOutButton />
           </div>
         </section>
 
